@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    leantime.service: web
+  name: web
+spec:
+  ports:
+  - name: "leantime-port"
+    port: 9000
+    targetPort: 9000
+  - name: "http-port"
+    port: 80
+    targetPort: 80
+  selector:
+    leantime.service: web
+status:
+  loadBalancer: {}

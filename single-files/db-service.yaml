@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    leantime.service: db
+  name: db
+spec:
+  ports:
+  - name: "mysql-port"
+    port: 3306
+    targetPort: 3306
+  selector:
+    leantime.service: db
+status:
+  loadBalancer: {}

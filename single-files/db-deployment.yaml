@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    leantime.service: db
+  name: db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      leantime.service: db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        leantime.service: db
+    spec:
+      containers:
+      - args:
+        - --character-set-server=utf8
+        - --collation-server=utf8_unicode_ci
+        env:
+        - name: MYSQL_DATABASE
+          value: leantime
+        - name: MYSQL_PASSWORD
+          value: 321.qwerty
+        - name: MYSQL_ROOT_PASSWORD
+          value: 321.qwerty
+        - name: MYSQL_USER
+          value: admin
+        image: mysql:5.7
+        name: mysql-leantime
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: db-data
+          subPath: mysql
+      restartPolicy: Always
+      volumes:
+      - name: db-data
+        persistentVolumeClaim:
+          claimName: db-data

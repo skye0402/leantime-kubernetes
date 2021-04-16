@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    leantime.service: web
+  name: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      leantime.service: web
+  template:
+    metadata:
+      labels:
+        leantime.service: web
+    spec:
+      containers:
+      - env:
+        - name: LEAN_APP_URL
+          value: https://my-leantime.mydomain.com #enter your exposed URL here!
+        - name: LEAN_DB_DATABASE
+          value: leantime
+        - name: LEAN_DB_HOST
+          value: db #add a FQN if your K8S requires it
+        - name: LEAN_DB_PASSWORD
+          value: 321.qwerty
+        - name: LEAN_DB_USER
+          value: admin
+        image: leantime/leantime:latest
+        name: leantime
+        ports:
+        - containerPort: 9000
+        - containerPort: 80
+      restartPolicy: Always
