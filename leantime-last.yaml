@@ -17,7 +17,7 @@ spec:
       containers:
       - env:
         - name: LEAN_APP_URL
-          value: https://my-leantime.mydomain.com #enter your exposed URL here!
+          value: https://myurl.com #enter your exposed URL here!
         - name: LEAN_DB_DATABASE
           value: leantime
         - name: LEAN_DB_HOST
@@ -25,10 +25,45 @@ spec:
         - name: LEAN_DB_PASSWORD
           value: 321.qwerty
         - name: LEAN_DB_USER
-          value: admin
+          value: admin   
+        - name: LEAN_EMAIL_SMTP_HOSTS
+          value: smtp.zoho.com
+        - name: LEAN_EMAIL_SMTP_USERNAME
+          value: apj.io.dl.infomail@zohomail.com
+        - name: LEAN_EMAIL_SMTP_PASSWORD
+          value: APJIOApril17
+        - name: LEAN_EMAIL_SMTP_SECURE
+          value: tls             
+        - name: LEAN_EMAIL_SMTP_PORT
+          value: "587"
+        - name: LEAN_EMAIL_USE_SMTP
+          value: "true"
+        - name: LEAN_EMAIL_SMTP_AUTO_TLS
+          value: "true"             
         image: leantime/leantime:latest
         name: leantime
+        volumeMounts:
+        - mountPath: /var/www/html/userfiles
+          name: user-data-volume
+          subPath: userfiles
         ports:
         - containerPort: 9000
         - containerPort: 80
+      initcontainers:
+      - name: lean-initcontainers
+        image: leantime/leantime:latest
+        volumeMounts:
+        - mountPath: /var/www/html/userfiles
+          name: user-data-volume
+          subPath: userfiles
+        #get ownership of mounted dir  
+        command: 
+        - /bin/chown 
+        - -R
+        - www-data
+        - /var/www/html/userfiles  
       restartPolicy: Always
+      volumes:
+      - name: user-data-volume
+        persistentVolumeClaim:
+          claimName: user-data-claim
