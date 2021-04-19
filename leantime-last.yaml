@@ -27,11 +27,11 @@ spec:
         - name: LEAN_DB_USER
           value: admin   
         - name: LEAN_EMAIL_SMTP_HOSTS
-          value: smtp.zoho.com
+          value: smtp.myhost.com
         - name: LEAN_EMAIL_SMTP_USERNAME
-          value: apj.io.dl.infomail@zohomail.com
+          value: <your email address>
         - name: LEAN_EMAIL_SMTP_PASSWORD
-          value: APJIOApril17
+          value: <your password>
         - name: LEAN_EMAIL_SMTP_SECURE
           value: tls             
         - name: LEAN_EMAIL_SMTP_PORT
