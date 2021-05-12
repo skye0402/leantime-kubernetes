@@ -5,7 +5,7 @@ metadata:
     leantime.service: web
   name: web
 spec:
-  replicas: 1
+#  replicas: 1
   selector:
     matchLabels:
       leantime.service: web
@@ -14,10 +14,12 @@ spec:
       labels:
         leantime.service: web
     spec:
+      securityContext:
+        fsGroup: 82
       containers:
       - env:
         - name: LEAN_APP_URL
-          value: https://myurl.com #enter your exposed URL here!
+          value: https://my-leantime.mydomain.com #enter your exposed URL here!
         - name: LEAN_DB_DATABASE
           value: leantime
         - name: LEAN_DB_HOST
@@ -27,28 +29,32 @@ spec:
         - name: LEAN_DB_USER
           value: admin   
         - name: LEAN_EMAIL_SMTP_HOSTS
-          value: smtp.zoho.com
+          value: smtp.xxxx.com
         - name: LEAN_EMAIL_SMTP_USERNAME
-          value: apj.io.dl.infomail@zohomail.com
+          value: xxxx@xxxx.com
         - name: LEAN_EMAIL_SMTP_PASSWORD
-          value: APJIOApril17
+          value: xxxxxx
         - name: LEAN_EMAIL_SMTP_SECURE
-          value: tls             
+          value: ssl             
         - name: LEAN_EMAIL_SMTP_PORT
-          value: "587"
+          value: "465"
         - name: LEAN_EMAIL_USE_SMTP
           value: "true"
         - name: LEAN_EMAIL_SMTP_AUTO_TLS
-          value: "true"             
+          value: "true"    
         image: leantime/leantime:latest
         name: leantime
         volumeMounts:
         - mountPath: /var/www/html/userfiles
           name: user-data-volume
           subPath: userfiles
+        - mountPath: /var/www/html/public/userfiles
+          name: public-user-data-volume
+          subPath: userfiles
         ports:
         - containerPort: 9000
         - containerPort: 80
+        #command: ["sh", "-c", "apk add --update --no-cache tzdata && cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime && echo 'Asia/Tokyo' > /etc/timezone && apk del tzdata"]         
       initcontainers:
       - name: lean-initcontainers
         image: leantime/leantime:latest
@@ -56,14 +62,16 @@ spec:
         - mountPath: /var/www/html/userfiles
           name: user-data-volume
           subPath: userfiles
-        #get ownership of mounted dir  
-        command: 
-        - /bin/chown 
-        - -R
-        - www-data
-        - /var/www/html/userfiles  
+        - mountPath: /var/www/html/public/userfiles
+          name: public-user-data-volume
+          subPath: userfiles
+        #get ownership of mounted volumes    
+        command: ["sh", "-c", "chown -R www-data /var/www/html && apk add --update --no-cache tzdata && cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime && echo 'Asia/Tokyo' > /etc/timezone && apk del tzdata"]         
       restartPolicy: Always
       volumes:
       - name: user-data-volume
         persistentVolumeClaim:
           claimName: user-data-claim
+      - name: public-user-data-volume
+        persistentVolumeClaim:
+          claimName: public-user-data-claim
